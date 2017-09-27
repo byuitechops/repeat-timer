@@ -1,12 +1,32 @@
-/*eslint-env node*/
+/*eslint-env node, es6*/
 /*eslint no-console:0*/
 
-var prompt = require('prompt');
+const prompt = require('prompt'),
+    moment = require('moment');
+
+function millTilRuntime(runTime) {
+
+    var now = moment(),
+        difference;
+
+    runTime = moment(runTime, 'hh:mm a');
+    difference = runTime.diff(now);
+
+    if (difference < 0) {
+        // add 1 day worth of miliseconds.
+        difference = runTime.add(1, 'day').diff(now);
+    }
+    return difference;
+}
 
 
 function convertValues(promptData, daFunction) {
     var timeout = 0;
     timeout = (((promptData.days * 24 + promptData.hours) * 60 + promptData.minutes) * 60 + promptData.seconds) * 1000;
+
+    var timeTillRun = millTilRuntime(promptData.time);
+
+    git
     
     //start loop
     console.log("Interval set to " + timeout + " milliseconds \nBeginning timer");
