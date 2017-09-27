@@ -22,10 +22,8 @@ function millTilRuntime(runTime) {
 function convertValues(promptData, daFunction) {
     var timeout = 0,
         timeTilRun = millTilRuntime(promptData.time);
-    
+
     timeout = (((promptData.days * 24 + promptData.hours) * 60 + promptData.minutes) * 60 + promptData.seconds) * 1000;
-
-
 
     function runDaFunction() {
         daFunction(); //IS THIS STILL NEEDED????
@@ -33,8 +31,8 @@ function convertValues(promptData, daFunction) {
         console.log("Interval set to " + timeout + " milliseconds \nBeginning timer");
         setInterval(daFunction, timeout);
     }
-    
-    
+
+
     console.log("First run will occur in " + timeTilRun + " milliseconds");
     setTimeout(runDaFunction, timeTilRun);
 }
@@ -44,7 +42,7 @@ function promptUser(daFunction) {
         properties: {
             time: {
                 pattern: /^\d?\d:\d\d [AP]M?$/i,
-                default: 'now',
+                default: moment().format('hh:mm a'),
                 message: "Please follow the pattern hh:mm AM/PM"
             },
             days: {
@@ -84,6 +82,5 @@ function promptUser(daFunction) {
         convertValues(results, daFunction);
     });
 }
-
 
 module.exports = promptUser;
