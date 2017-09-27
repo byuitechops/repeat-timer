@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/byuitechops/repeat-timer#readme",
   "dependencies": {
+    "moment": "^2.18.1",
     "prompt": "^1.0.0"
   }
 }
