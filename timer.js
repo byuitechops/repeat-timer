@@ -20,16 +20,23 @@ function millTilRuntime(runTime) {
 }
 
 function convertValues(promptData, daFunction) {
-    var timeout = 0;
+    var timeout = 0,
+        timeTilRun = millTilRuntime(promptData.time);
+    
     timeout = (((promptData.days * 24 + promptData.hours) * 60 + promptData.minutes) * 60 + promptData.seconds) * 1000;
 
-    var timeTillRun = millTilRuntime(promptData.time);
+
+
+    function runDaFunction() {
+        daFunction(); //IS THIS STILL NEEDED????
+        //start loop
+        console.log("Interval set to " + timeout + " milliseconds \nBeginning timer");
+        setInterval(daFunction, timeout);
+    }
     
-    //start loop
-    console.log("Interval set to " + timeout + " milliseconds \nBeginning timer");
-    moment.
-    daFunction();
-    setInterval(daFunction, timeout);
+    
+    console.log("First run will occur in " + timeTilRun + " milliseconds");
+    setTimeout(runDaFunction, timeTilRun);
 }
 
 function promptUser(daFunction) {
