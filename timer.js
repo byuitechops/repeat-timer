@@ -4,10 +4,14 @@
 const prompt = require('prompt'),
     moment = require('moment');
 
+/*calculates time till the first run*/
 function millTilRuntime(runTime) {
-
     var now = moment(),
         difference;
+
+    if (runTime === 'Now') {
+        return 0;
+    }
 
     runTime = moment(runTime, 'hh:mm a');
     difference = runTime.diff(now);
@@ -19,6 +23,7 @@ function millTilRuntime(runTime) {
     return difference;
 }
 
+/*converts days, hours, minutes, seconds to millseconds*/
 function convertValues(promptData, daFunction) {
     var timeout = 0,
         timeTilRun = millTilRuntime(promptData.time);
@@ -41,8 +46,8 @@ function promptUser(daFunction) {
     var settings = {
         properties: {
             time: {
-                pattern: /^\d?\d:\d\d [AP]M?$/i,
-                default: moment().format('hh:mm a'),
+                pattern: /^(Now)|(\d?\d:\d\d [AP]M?)$/i,
+                default: 'Now',
                 message: "Please follow the pattern hh:mm AM/PM"
             },
             days: {
