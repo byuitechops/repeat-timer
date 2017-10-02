@@ -2,90 +2,111 @@
 /*eslint no-console:0*/
 
 const prompt = require('prompt'),
-    moment = require('moment');
+  moment = require('moment');
 
-/*calculates time till the first run*/
+/*****************************
+ * calculates time till the
+ * first fun in milliseconds
+ *****************************/
 function millTilRuntime(runTime) {
-    var now = moment(),
-        difference;
+  var now = moment(),
+    difference;
 
-    if (runTime === 'Now') {
-        return 0;
-    }
+  if (runTime === 'Now') {
+    return 0;
+  }
 
-    runTime = moment(runTime, 'hh:mm a');
-    difference = runTime.diff(now);
+  runTime = moment(runTime, 'hh:mm a');
+  difference = runTime.diff(now);
 
-    if (difference < 0) {
-        // add 1 day worth of miliseconds.
-        difference = runTime.add(1, 'day').diff(now);
-    }
-    return difference;
+  if (difference < 0) {
+    /* Add 1 day worth of miliseconds */
+    difference = runTime.add(1, 'day').diff(now);
+  }
+  return difference;
 }
 
-/*converts days, hours, minutes, seconds to millseconds*/
+/*************************************
+ * converts days, hours, minutes, and 
+ * seconds to millseconds 
+ ************************************/
 function convertValues(promptData, daFunction) {
-    var timeout = 0,
-        timeTilRun = millTilRuntime(promptData.time);
+  var timeout = 0,
+    timeTilRun = millTilRuntime(promptData.time);
 
-    timeout = (((promptData.days * 24 + promptData.hours) * 60 + promptData.minutes) * 60 + promptData.seconds) * 1000;
+  timeout = (((promptData.days * 24 + promptData.hours) * 60 + promptData.minutes) * 60 + promptData.seconds) * 1000;
 
-    function runDaFunction() {
-        daFunction(); //IS THIS STILL NEEDED????
-        //start loop
-        console.log("Interval set to " + timeout + " milliseconds \nBeginning timer");
-        setInterval(daFunction, timeout);
+  /*******************************************
+   * Runs the function provided to the module
+   ******************************************/
+  function runDaFunction() {
+    /* setInterval runs the first time after waiting the specified time.
+    This line runs the function immediately and then starts counting*/
+    daFunction();
+
+    /* Start loop IF repeat was set to more than 0*/
+    if (timeout !== 0) {
+      setInterval(daFunction, timeout);
+    } else {
+      console.log("Complete");
+      return;
     }
+  }
 
-
-    console.log("First run will occur in " + timeTilRun + " milliseconds");
-    setTimeout(runDaFunction, timeTilRun);
+  /* Calls runDaFunction after timeTilRun has passed */
+  console.log("First run will occur in " + timeTilRun + " milliseconds");
+  console.log("Repeat set to " + timeout + " milliseconds");
+  setTimeout(runDaFunction, timeTilRun);
 }
 
+/***********************************
+ * Get repeat and scheduling info 
+ * from user. calls convert values
+ **********************************/
 function promptUser(daFunction) {
-    var settings = {
-        properties: {
-            time: {
-                pattern: /^(Now)|(\d?\d:\d\d [AP]M?)$/i,
-                default: 'Now',
-                message: "Please follow the pattern hh:mm AM/PM"
-            },
-            days: {
-                pattern: /^\d+$/,
-                message: "Value must be a number",
-                type: 'integer',
-                default: 0
-            },
-            hours: {
-                pattern: /^\d+$/,
-                message: "Value must be a number",
-                type: 'integer',
-                default: 0
-            },
-            minutes: {
-                pattern: /^\d+$/,
-                message: "Value must be a number",
-                type: 'integer',
-                default: 0
-            },
-            seconds: {
-                pattern: /^\d+$/,
-                message: "Value must be a number",
-                type: 'integer',
-                default: 0
-            }
-        }
-    };
-    console.log("What time of day would you like the program to run? (ex: hh:mm AM/PM) " +
-        "How frequently you like the program to run?");
-    prompt.start();
-    prompt.get(settings, function (err, results) {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        convertValues(results, daFunction);
-    });
+  var settings = {
+    properties: {
+      time: {
+        pattern: /^(Now)|(\d?\d:\d\d [AP]M?)$/i,
+        default: 'Now',
+        message: "Please follow the pattern hh:mm AM/PM"
+      },
+      days: {
+        pattern: /^\d+$/,
+        message: "Value must be a number",
+        type: 'integer',
+        default: 0
+      },
+      hours: {
+        pattern: /^\d+$/,
+        message: "Value must be a number",
+        type: 'integer',
+        default: 0
+      },
+      minutes: {
+        pattern: /^\d+$/,
+        message: "Value must be a number",
+        type: 'integer',
+        default: 0
+      },
+      seconds: {
+        pattern: /^\d+$/,
+        message: "Value must be a number",
+        type: 'integer',
+        default: 0
+      }
+    }
+  };
+  console.log("What time of day would you like the program to run? (ex: hh:mm AM/PM) " +
+    "How frequently you like the program to run?");
+  prompt.start();
+  prompt.get(settings, function (err, results) {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    convertValues(results, daFunction);
+  });
 }
 
 module.exports = promptUser;
