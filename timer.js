@@ -5,7 +5,7 @@ const prompt = require('prompt');
 const moment = require('moment');
 const chalk = require('chalk');
 
-const daPackage = require('../package.json');
+const daPackage = require('../../package.json');
 
 /*****************************
  * millTilRuntime
@@ -54,7 +54,7 @@ function convertValues(promptData, daFunction) {
       This line runs the function immediately and then starts counting*/
         daFunction();
 
-        // Start loop IF repeat was set to more than 0
+        /* Start loop IF repeat was set to more than 0 */
         if (timeout !== 0) {
             setInterval(daFunction, timeout);
         } else {
@@ -63,7 +63,7 @@ function convertValues(promptData, daFunction) {
         }
     }
 
-    // Calls runDaFunction after timeTilRun has passed
+    /* Calls runDaFunction after timeTilRun has passed */
     console.log('First run will occur in ' + timeTilRun + ' milliseconds');
     console.log('Repeat set to ' + timeout + ' milliseconds');
 
@@ -124,7 +124,11 @@ function promptUser(daFunction) {
     });
 }
 
-function validateInput(key, object) {
+/*******************************************
+ * Ensure repeat settings from Package.json
+ * are valid. revert to prompt if not
+ ******************************************/
+function validatePackageInput(key, object) {
     let prop = object[key];
 
     if (key === 'time' && !/^(?:[1-9]|1[0-2]):[1-5]\d?\s(?:a|p)$/.test(prop)) {
@@ -139,6 +143,10 @@ function validateInput(key, object) {
 }
 
 
+/****************************************************
+ * Add missing fields to package.json repeat object.
+ * Validate existing fields
+ ****************************************************/
 function formatPackageSettings(settings, daFunction) {
     const requiredKeys = ['time', 'days', 'hours', 'minutes', 'seconds'];
 
@@ -147,7 +155,7 @@ function formatPackageSettings(settings, daFunction) {
             if (!settings[requiredKey]) {
                 settings[requiredKey] = 0;
             } else {
-                settings[requiredKey] = validateInput(requiredKey, settings);
+                settings[requiredKey] = validatePackageInput(requiredKey, settings);
             }
         });
 
@@ -159,6 +167,10 @@ function formatPackageSettings(settings, daFunction) {
 }
 
 
+/*******************************************************
+ * Start Here. Checks for repeat object in package.json
+ * and calls prompt if none exist
+ ********************************************************/
 function init(daFunction) {
     if (!daPackage.repeat || process.argv.includes('-p'))
         promptUser(daFunction);
